@@ -16,5 +16,5 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-1
       - run: sam init --no-interactive -n sam-app -a x86_64 --package-type Zip -r python3.10 -d pip --app-template hello-world
-     #  - run: sam build --use-container --build-image amazon/aws-sam-cli-build-image-python3.10
-     # - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name extract --s3-bucket data-pipeline-test-000001 --capabilities CAPABILITY_IAM --region ap-southeast-1
+      - run: sam build --use-container --build-image amazon/aws-sam-cli-build-image-python3.10
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name extract --s3-bucket data-pipeline-test-000001 --capabilities CAPABILITY_IAM --region ap-southeast-1
