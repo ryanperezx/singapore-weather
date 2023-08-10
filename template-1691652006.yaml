@@ -4,7 +4,8 @@ Resources:
   Extract:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./
+      FunctionName: payment_function
+      CodeUri: ./extract/
       Handler: extract.lambda_handler
       Role:
         Fn::GetAtt:
