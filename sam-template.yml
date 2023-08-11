@@ -7,6 +7,10 @@ Resources:
       FunctionName: singapore_weather_extract
       CodeUri: ./extract
       Handler: extract.lambda_handler
+      Environment:
+        Variables:
+          api_key: 
+          BUCKET_NAME: !Ref S3_BUCKET
       Role:
         Fn::GetAtt:
         - ExtractRole
