@@ -9,7 +9,6 @@ Resources:
       Handler: extract.lambda_handler
       Environment:
         Variables:
-          api_key: 
           BUCKET_NAME: !Ref S3_BUCKET
       Role:
         Fn::GetAtt:
