@@ -1,15 +1,20 @@
 import requests
 import logging
+import json
+import boto3    
+import os
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
-
+if logging.getLogger().hasHandlers():
+    logging.getLogger().setLevel(logging.INFO)
+else:
+    logging.basicConfig(level=logging.INFO)
 
 def get_request_content(link, headers) -> str:
     request = requests.get(url=link, headers=headers)
     request.raise_for_status()
     request.close()
-    return request.text
+    return request
 
 
 def lambda_handler(event, context):
@@ -24,8 +29,13 @@ def lambda_handler(event, context):
     }
 
     link = 'https://api.data.gov.sg/v1/environment/2-hour-weather-forecast'
+    s3_bucket = os.environ('S3_BUCKET')
 
     data = get_request_content(link, headers)
-
-    logger.info(data)
+    s3 = boto3.resource('s3')
+    s3_object = s3.Object(s3_bucket, 'data.json')
+    s3_object.put(
+        Body=(bytes(json.dumps(data).encode('UTF-8')))
+    )
+    
     return 200
