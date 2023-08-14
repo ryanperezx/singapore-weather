@@ -17,7 +17,7 @@ def get_request_content(link, headers) -> str:
     return request
 
 
-def lambda_handler(event, context):
+def lambda_handler(event=None, context=None):
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
@@ -35,7 +35,10 @@ def lambda_handler(event, context):
     s3 = boto3.resource('s3')
     s3_object = s3.Object(s3_bucket, 'data.json')
     s3_object.put(
-        Body=(bytes(json.dumps(data).encode('UTF-8')))
+        Body=(bytes(json.dumps(data.json()).encode('UTF-8')))
     )
     
     return 200
+
+if __name__ == '__main__':
+    lambda_handler()
