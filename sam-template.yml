@@ -9,7 +9,7 @@ Resources:
       Handler: extract.lambda_handler
       Environment:
         Variables:
-          BUCKET_NAME: !Ref S3_BUCKET
+          BUCKET_NAME: !Sub "${S3_BUCKET}"
       Role:
         Fn::GetAtt:
         - ExtractRole
