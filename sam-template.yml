@@ -49,7 +49,7 @@ Resources:
           - Effect: Allow
             Action:
             - s3:PutObject
-            Resource: !Ref 'arn:aws:s3:::${S3BUCKET}/*'
+            Resource: !Sub 'arn:aws:s3:::${S3BUCKET}/*'
 Parameters:
   S3BUCKET:
     Type: String
