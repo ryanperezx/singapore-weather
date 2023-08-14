@@ -29,7 +29,7 @@ def lambda_handler(event, context):
     }
 
     link = 'https://api.data.gov.sg/v1/environment/2-hour-weather-forecast'
-    s3_bucket = os.environ('S3_BUCKET')
+    s3_bucket = os.environ('BUCKET_NAME')
 
     data = get_request_content(link, headers)
     s3 = boto3.resource('s3')

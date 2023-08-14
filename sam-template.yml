@@ -9,7 +9,7 @@ Resources:
       Handler: extract.lambda_handler
       Environment:
         Variables:
-          BUCKET_NAME: !Sub "${S3BUCKET}"
+          BUCKET_NAME: !Ref S3BUCKET
       Role:
         Fn::GetAtt:
         - ExtractRole
@@ -41,3 +41,6 @@ Resources:
             - logs:CreateLogGroup
             - logs:PutLogEvents
             Resource: '*'
+Parameters:
+  S3BUCKET:
+    Type: String
