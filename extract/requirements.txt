@@ -1,4 +1,4 @@
 requests
 urllib3<2
 wheel
-pendulum==2.1.2
+pendulum --no-binary=pendulum
