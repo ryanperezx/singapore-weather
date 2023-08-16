@@ -10,14 +10,14 @@ if logging.getLogger().hasHandlers():
 else:
     logging.basicConfig(level=logging.INFO)
 
-def get_request_content(link, headers) -> str:
+def get_request_content(link, headers) -> requests.Response:
     request = requests.get(url=link, headers=headers)
     request.raise_for_status()
     request.close()
     return request
 
 
-def lambda_handler(event: dict, context):
+def lambda_handler(event: dict, context) -> requests.Response:
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
@@ -35,11 +35,12 @@ def lambda_handler(event: dict, context):
     s3_bucket = os.environ.get('BUCKET_NAME')
 
     data = get_request_content(link, headers)
+    data = data.json()
     data['created_at'] = event['execution_datetime']
 
     s3 = boto3.client('s3')
     response = s3.put_object(
-        Body=(bytes(json.dumps(data.json()).encode('UTF-8'))),
+        Body=(bytes(data)),
         Bucket=s3_bucket,
         Key=f'singapore_weather/{event["execution_datetime"]}.json'
     )
