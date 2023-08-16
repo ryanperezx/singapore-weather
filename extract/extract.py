@@ -3,6 +3,7 @@ import logging
 import json
 import boto3    
 import os
+import pendulum
 
 logger = logging.getLogger(__name__)
 if logging.getLogger().hasHandlers():
@@ -27,7 +28,7 @@ def lambda_handler(event: dict, context) -> requests.Response:
         'Accept-Language': 'en-US,en;q=0.8',
         'Connection': 'keep-alive'
     }
-    if event is not None and event['execution_datetime']:
+    if event is not None and 'execution_datetime' in event.keys():
         link = f'https://api.data.gov.sg/v1/environment/2-hour-weather-forecast?date_time={event["execution_datetime"]}'
     else:
         link = 'https://api.data.gov.sg/v1/environment/2-hour-weather-forecast'
@@ -36,14 +37,16 @@ def lambda_handler(event: dict, context) -> requests.Response:
 
     data = get_request_content(link, headers)
     data = data.json()
-    data['created_at'] = event['execution_datetime']
+    if event is not None and 'execution_datetime' in event.keys():
+        data['created_at'] = event['execution_datetime']
+    else:
+        data['created_at'] = pendulum.now('Asia/Manila').strftime('%Y-%m-%dT%H:%M:%S')
 
     s3_bucket = boto3.resource('s3').Bucket(s3_bucket)
 
     response = s3_bucket.put_object(
-        Body=(bytes(data)),
-        Key=f'singapore_weather/{event["execution_datetime"]}.json'
+        Body=(bytes(json.dumps(data).encode('utf-8'))),
+        Key=f'singapore_weather/{data["created_at"]}.json'
     )
-    
     
     return response
