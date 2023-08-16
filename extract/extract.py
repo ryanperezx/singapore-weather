@@ -3,7 +3,7 @@ import logging
 import json
 import boto3    
 import os
-import pendulum
+import pytz
 
 logger = logging.getLogger(__name__)
 if logging.getLogger().hasHandlers():
