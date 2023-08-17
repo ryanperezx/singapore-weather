@@ -44,18 +44,12 @@ def lambda_handler(event: dict, context) -> requests.Response:
     else:
         data['created_at'] = datetime.now(pytz.timezone('Asia/Manila')).strftime('%Y-%m-%dT%H:%M:%S')
 
-    s3_bucket = boto3.resource('s3').Bucket(s3_bucket_name)
+    s3_client = boto3.Client('s3')
 
-    s3_bucket.put_object(
+    response = s3_client.put_object(
+        Bucket=s3_bucket_name,
         Body=(bytes(json.dumps(data).encode('utf-8'))),
         Key=f'singapore_weather/{data["created_at"]}.json'
     )
 
-    try:
-        s3_bucket.head_object(Bucket=s3_bucket_name, Key=f'singapore_weather/{data["created_at"]}.json')
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code']:
-            ret_val = e.response['Error']['Code']
-        else:
-            raise e
-    return ret_val
+    return response
