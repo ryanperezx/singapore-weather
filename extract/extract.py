@@ -46,7 +46,7 @@ def lambda_handler(event: dict, context) -> requests.Response:
 
     s3_bucket = boto3.resource('s3').Bucket(s3_bucket_name)
 
-    response = s3_bucket.put_object(
+    s3_bucket.put_object(
         Body=(bytes(json.dumps(data).encode('utf-8'))),
         Key=f'singapore_weather/{data["created_at"]}.json'
     )
