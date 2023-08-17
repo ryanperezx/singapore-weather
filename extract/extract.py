@@ -21,7 +21,6 @@ def get_request_content(link, headers) -> requests.Response:
 
 
 def lambda_handler(event: dict, context) -> requests.Response:
-    ret_val = 200
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -44,7 +43,7 @@ def lambda_handler(event: dict, context) -> requests.Response:
     else:
         data['created_at'] = datetime.now(pytz.timezone('Asia/Manila')).strftime('%Y-%m-%dT%H:%M:%S')
 
-    s3_client = boto3.Client('s3')
+    s3_client = boto3.client('s3')
 
     response = s3_client.put_object(
         Bucket=s3_bucket_name,
