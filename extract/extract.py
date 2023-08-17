@@ -52,10 +52,10 @@ def lambda_handler(event: dict, context) -> requests.Response:
     )
 
     try:
-        s3_bucket.Object(s3_bucket_name, f'singapore_weather/{data["created_at"]}.json').load()
+        s3_bucket.head_object(Bucket=s3_bucket_name, Key=f'singapore_weather/{data["created_at"]}.json')
     except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == "404":
-            ret_val = 404
+        if e.response['Error']['Code']:
+            ret_val = e.response['Error']['Code']
         else:
             raise e
     return ret_val
