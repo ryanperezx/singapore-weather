@@ -7,6 +7,9 @@ Resources:
       FunctionName: singapore_weather_extract
       CodeUri: ./extract
       Handler: extract.lambda_handler
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref S3BUCKET
       Role:
         Fn::GetAtt:
         - ExtractRole
@@ -52,6 +55,10 @@ Resources:
       FunctionName: singapore_weather_load
       CodeUri: ./load
       Handler: load.lambda_handler
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref S3BUCKET
+          DYNAMODB_TABLE: !Ref DYNAMODBTABLE
       Role:
         Fn::GetAtt:
         - LoadRole
@@ -83,6 +90,7 @@ Resources:
             - logs:CreateLogGroup
             - logs:PutLogEvents
             Resource: '*'
+            
       - PolicyName: LambdaS3Policy
         PolicyDocument:
           Version: '2012-10-17'
