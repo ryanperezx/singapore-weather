@@ -5,6 +5,7 @@ import boto3
 import os
 import pytz
 import datetime
+from boto3.dynamodb.types import TypeSerializer
 
 logger = logging.getLogger(__name__)
 if logging.getLogger().hasHandlers():
@@ -12,6 +13,11 @@ if logging.getLogger().hasHandlers():
 else:
     logging.basicConfig(level=logging.INFO)
 
+def serialize(json_object):
+    serializer = TypeSerializer()
+    serialized_item = serializer.serialize(vars(json_object) if hasattr(json_object, '__dict__') else json_object)
+
+    return json_object if 'M' not in serialized_item else serialized_item['M']
 
 
 def lambda_handler(event: dict, context) -> requests.Response:
