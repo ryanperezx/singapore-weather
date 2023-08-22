@@ -106,7 +106,7 @@ Resources:
           - Effect: Allow
             Action:
             - dynamodb:PutItem
-            Resource: !Sub 'arn:aws:dynamodb:*:*:table/${DYNAMODBTABLE}'
+            Resource: !Sub 'arn:aws:dynamodb:ap-southeast-1:*:table/${DYNAMODBTABLE}'
 Parameters:
   S3BUCKET:
     Type: String
