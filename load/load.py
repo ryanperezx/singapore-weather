@@ -32,7 +32,8 @@ def lambda_handler(event: dict, context) -> requests.Response:
     dynamodb_client = boto3.client('dynamodb')
     
     json_object = json.loads(s3_client.get_object(Bucket=s3_bucket_name, Key=s3_file_path)['Body'].read())
-
-    response = dynamodb_client.put_item(TableName=dynamodb_table_name, Item=json_object)
+    serialized_json_object = serialize(json_object)
+    
+    response = dynamodb_client.put_item(TableName=dynamodb_table_name, Item=serialized_json_object)
 
     return response
