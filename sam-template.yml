@@ -40,7 +40,6 @@ Resources:
             - logs:CreateLogStream
             - logs:CreateLogGroup
             - logs:PutLogEvents
-            - s3:PutObject
             Resource: '*'
       - PolicyName: LambdaS3Policy
         PolicyDocument:
@@ -50,6 +49,66 @@ Resources:
             Action:
             - s3:PutObject
             Resource: !Sub 'arn:aws:s3:::${S3BUCKET}/*'
+  Load:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: singapore_weather_load
+      CodeUri: ./load
+      Handler: load.lambda_handler
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref S3BUCKET
+          DYNAMODB_TABLE: !Ref DYNAMODBTABLE
+      Role:
+        Fn::GetAtt:
+        - LoadRole
+        - Arn
+      Runtime: python3.10
+      Timeout: 3
+      MemorySize: 256
+  LoadRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: LambdaLogsPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogStream
+            - logs:CreateLogGroup
+            - logs:PutLogEvents
+            Resource: '*'
+            
+      - PolicyName: LambdaS3Policy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - s3:GetObject
+            Resource: !Sub 'arn:aws:s3:::${S3BUCKET}/*'
+      - PolicyName: LambdaDynamoDBPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:PutItem
+            Resource: !Sub 'arn:aws:dynamodb:*:*:table/${DYNAMODBTABLE}'
 Parameters:
   S3BUCKET:
+    Type: String
+  DYNAMODBTABLE:
     Type: String
