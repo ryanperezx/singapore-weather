@@ -6,6 +6,7 @@ import os
 import pytz
 import datetime
 from boto3.dynamodb.types import TypeSerializer
+from decimal import Decimal
 
 logger = logging.getLogger(__name__)
 if logging.getLogger().hasHandlers():
@@ -31,9 +32,9 @@ def lambda_handler(event: dict, context) -> requests.Response:
     s3_client = boto3.client('s3')
     dynamodb_client = boto3.client('dynamodb')
     
-    json_object = json.loads(s3_client.get_object(Bucket=s3_bucket_name, Key=s3_file_path)['Body'].read())
+    json_object = json.loads(s3_client.get_object(Bucket=s3_bucket_name, Key=s3_file_path)['Body'].read(), parse_float=Decimal)
     serialized_json_object = serialize(json_object)
-    
+
     response = dynamodb_client.put_item(TableName=dynamodb_table_name, Item=serialized_json_object)
 
     return response
