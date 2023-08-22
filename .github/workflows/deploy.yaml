@@ -19,4 +19,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-1
       - run: sam build --use-container --build-image public.ecr.aws/sam/build-python3.10:1.94.0-20230727191512 -t sam-template.yml 
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name ${{ github.event.repository.name }}_etl --s3-bucket "$S3_BUCKET" --capabilities CAPABILITY_IAM --region ap-southeast-1  --on-failure DELETE --parameter-overrides S3BUCKET=$S3_BUCKET,DYNAMODBTABLE=$DYNAMODB_TABLE
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name ${{ github.event.repository.name }}-etl --s3-bucket "$S3_BUCKET" --capabilities CAPABILITY_IAM --region ap-southeast-1  --on-failure DELETE --parameter-overrides S3BUCKET=$S3_BUCKET,DYNAMODBTABLE=$DYNAMODB_TABLE
