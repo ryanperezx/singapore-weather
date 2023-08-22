@@ -5,7 +5,7 @@ import boto3
 import os
 import pytz
 from datetime import datetime
-import botocore
+import mmh3
 
 logger = logging.getLogger(__name__)
 if logging.getLogger().hasHandlers():
@@ -38,17 +38,19 @@ def lambda_handler(event: dict, context) -> requests.Response:
 
     data = get_request_content(link, headers)
     data = data.json()
+    
+    data['id'] = mmh3.hash(str(data))
     if event is not None and 'execution_datetime' in event.keys():
-        data['created_at'] = event['execution_datetime']
+        data['uploaded_at'] = event['execution_datetime']
     else:
-        data['created_at'] = datetime.now(pytz.timezone('Asia/Manila')).strftime('%Y-%m-%dT%H:%M:%S')
+        data['uploaded_at'] = datetime.now(pytz.timezone('Asia/Manila')).strftime('%Y-%m-%dT%H:%M:%S')
 
     s3_client = boto3.client('s3')
 
     response = s3_client.put_object(
         Bucket=s3_bucket_name,
         Body=(bytes(json.dumps(data).encode('utf-8'))),
-        Key=f'singapore_weather/{data["created_at"]}.json'
+        Key=f'singapore_weather/{data["uploaded_at"]}.json'
     )
 
     return response
