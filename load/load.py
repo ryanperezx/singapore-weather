@@ -27,7 +27,7 @@ def lambda_handler(event: dict, context) -> requests.Response:
     if event is not None and 'execution_datetime' in event.keys():
         s3_file_path = f'singapore_weather/{event["execution_datetime"]}.json'
     else:
-        s3_file_path = datetime.now(pytz.timezone('Asia/Manila')).strftime('%Y-%m-%dT%H:%M:%S')
+        s3_file_path = f'singapore_weather/{datetime.now(pytz.timezone("Asia/Manila")).strftime("%Y-%m-%dT%H:%M:%S")}.json'
     
     s3_client = boto3.client('s3')
     dynamodb_client = boto3.client('dynamodb')
